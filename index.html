@@ -68,6 +68,11 @@
             box-shadow: 0 0 0 3px rgba(66, 117, 178, 0.1);
         }
 
+        .form-group input::placeholder {
+            color: #999999;
+            opacity: 1;
+        }
+
         .preview-title {
             margin-top: 30px;
             margin-bottom: 10px;
@@ -144,7 +149,7 @@
         <input
             type="text"
             id="employeeName"
-            value="Insert Name"
+            placeholder="Insert Name"
             oninput="updateSignature()"
         >
     </div>
@@ -154,7 +159,7 @@
         <input
             type="text"
             id="employeeTitle"
-            value="Insert Job Title"
+            placeholder="Insert Job Title"
             oninput="updateSignature()"
         >
     </div>
@@ -164,7 +169,7 @@
         <input
             type="text"
             id="employeeNumber"
-            value="Insert Contact Number"
+            placeholder="Insert Contact Number"
             oninput="updateSignature()"
         >
     </div>
@@ -185,23 +190,7 @@
 
 </div>
 
-
 <script>
-
-/*
-|--------------------------------------------------------------------------
-| ORIGINAL SIGNATURE TEMPLATE
-|--------------------------------------------------------------------------
-|
-| The signature markup below is based directly on the template provided.
-| The only dynamic values are:
-|
-| EMPLOYEENAME
-| EMPLOYEETITLE
-| EMPLOYEENUMBER
-|
-|--------------------------------------------------------------------------
-*/
 
 const signatureTemplate = `
 <table cellpadding="0" cellspacing="0" border="0">
@@ -288,12 +277,6 @@ const signatureTemplate = `
 `;
 
 
-/*
-|--------------------------------------------------------------------------
-| Escape user input
-|--------------------------------------------------------------------------
-*/
-
 function escapeHTML(value) {
     return String(value)
         .replace(/&/g, "&amp;")
@@ -303,12 +286,6 @@ function escapeHTML(value) {
         .replace(/'/g, "&#039;");
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| Generate signature
-|--------------------------------------------------------------------------
-*/
 
 function getSignatureHTML() {
 
@@ -331,12 +308,6 @@ function getSignatureHTML() {
 }
 
 
-/*
-|--------------------------------------------------------------------------
-| Live Preview
-|--------------------------------------------------------------------------
-*/
-
 function updateSignature() {
 
     const previewContainer =
@@ -345,12 +316,6 @@ function updateSignature() {
     previewContainer.innerHTML = getSignatureHTML();
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| Copy formatted signature
-|--------------------------------------------------------------------------
-*/
 
 async function copyVisualSignature() {
 
@@ -409,12 +374,6 @@ async function copyVisualSignature() {
 }
 
 
-/*
-|--------------------------------------------------------------------------
-| Copy HTML source
-|--------------------------------------------------------------------------
-*/
-
 async function copyHTMLCode() {
 
     const html = getSignatureHTML();
@@ -445,12 +404,6 @@ async function copyHTMLCode() {
 }
 
 
-/*
-|--------------------------------------------------------------------------
-| Success message
-|--------------------------------------------------------------------------
-*/
-
 function showSuccess(message) {
 
     const alert =
@@ -466,12 +419,6 @@ function showSuccess(message) {
     }, 3000);
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| Initial preview
-|--------------------------------------------------------------------------
-*/
 
 document.addEventListener("DOMContentLoaded", function() {
     updateSignature();
