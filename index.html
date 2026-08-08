@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coinut Email Signature Generator</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 40px 20px;
+            background: #f4f6f8;
+            font-family: Arial, sans-serif;
+            color: #333333;
+        }
+
+        .generator {
+            max-width: 850px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .generator-title {
+            margin: 0 0 8px;
+            font-size: 26px;
+            font-weight: 700;
+            color: #4275b2;
+        }
+
+        .generator-description {
+            margin: 0 0 28px;
+            color: #666666;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 7px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #333333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #d8dde3;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: Arial, sans-serif;
+            outline: none;
+        }
+
+        .form-group input:focus {
+            border-color: #4275b2;
+            box-shadow: 0 0 0 3px rgba(66, 117, 178, 0.1);
+        }
+
+        .preview-title {
+            margin-top: 30px;
+            margin-bottom: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #333333;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .preview-box {
+            overflow-x: auto;
+            padding: 24px;
+            background: #ffffff;
+            border: 1px solid #e0e4e8;
+            border-radius: 8px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            border: 0;
+            border-radius: 6px;
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: #4275b2;
+            color: #ffffff;
+        }
+
+        .btn-secondary {
+            background: #47ceab;
+            color: #ffffff;
+        }
+
+        .alert {
+            display: none;
+            margin-top: 15px;
+            padding: 11px 14px;
+            border-radius: 6px;
+            background: #e8f8f3;
+            color: #248b70;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .alert.show {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="generator">
+
+    <h1 class="generator-title">Coinut Email Signature Generator</h1>
+
+    <p class="generator-description">
+        Enter the employee information below to generate the email signature.
+    </p>
+
+    <div class="form-group">
+        <label for="employeeName">Full Name</label>
+        <input
+            type="text"
+            id="employeeName"
+            value="Insert Name"
+            oninput="updateSignature()"
+        >
+    </div>
+
+    <div class="form-group">
+        <label for="employeeTitle">Job Title</label>
+        <input
+            type="text"
+            id="employeeTitle"
+            value="Insert Job Title"
+            oninput="updateSignature()"
+        >
+    </div>
+
+    <div class="form-group">
+        <label for="employeeNumber">Contact Number</label>
+        <input
+            type="text"
+            id="employeeNumber"
+            value="Insert Contact Number"
+            oninput="updateSignature()"
+        >
+    </div>
+
+    <div class="preview-title">Live Preview</div>
+
+    <div class="preview-box" id="previewContainer"></div>
+
+    <div class="btn-group">
+        <button class="btn-secondary" onclick="copyHTMLCode()">
+            Copy HTML Code
+        </button>
+    </div>
+
+    <div class="alert" id="successAlert">
+        Copied successfully!
+    </div>
+
+</div>
+
+
+<script>
+
+/*
+|--------------------------------------------------------------------------
+| ORIGINAL SIGNATURE TEMPLATE
+|--------------------------------------------------------------------------
+|
+| The signature markup below is based directly on the template provided.
+| The only dynamic values are:
+|
+| EMPLOYEENAME
+| EMPLOYEETITLE
+| EMPLOYEENUMBER
+|
+|--------------------------------------------------------------------------
+*/
+
+const signatureTemplate = `
+<table cellpadding="0" cellspacing="0" border="0">
+<tbody>
+
+  <tr>
+    <td style="padding: 0 0 12px 0;">
+      <div style="font-family: 'Open Sans', Arial, sans-serif; font-size: 19px; font-weight: 600; color: #4275b2; text-transform: uppercase; letter-spacing: 0.3px; line-height: 22px;">
+        EMPLOYEENAME
+      </div>
+      <div style="font-family: 'Open Sans', Arial, sans-serif; font-size: 13.5px; font-weight: 500; color: #333333; text-transform: uppercase; letter-spacing: 0.2px; margin-top: 2px; margin-bottom: 4px;">
+        EMPLOYEETITLE
+      </div>
+      <div style="font-family: 'Open Sans', Arial, sans-serif; font-size: 13px; color: #333333; letter-spacing: 0.1px;">
+        EMPLOYEENUMBER
+      </div>
+    </td>
+  </tr>
+
+  <tr>
+    <td style="padding: 0 0 16px 0;">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td valign="middle" style="padding-right: 12px;">
+            <a href="https://linkedin.com/company/coinut" target="_blank" style="text-decoration: none;">
+              <img src="https://coinut.com/public-assets/signature/linkedin@2x.png" alt="LinkedIn" width="22" height="22" style="display: block; border: 0; width: 22px; height: 22px;" />
+            </a>
+          </td>
+          <td valign="middle" style="padding-right: 12px;">
+            <a href="https://facebook.com/CoinutExchange" target="_blank" style="text-decoration: none;">
+              <img src="https://coinut.com/public-assets/signature/fb@2x.png" alt="Facebook" width="22" height="22" style="display: block; border: 0; width: 22px; height: 22px;" />
+            </a>
+          </td>
+          <td valign="middle" style="padding-right: 12px;">
+            <a href="https://x.com/coinut_official" target="_blank" style="text-decoration: none;">
+              <img src="https://coinut.com/public-assets/signature/socx@2x.png" alt="X" width="22" height="22" style="display: block; border: 0; width: 22px; height: 22px;" />
+            </a>
+          </td>
+          <td valign="middle">
+            <a href="https://www.coinut.com" target="_blank" style="text-decoration: none;">
+              <img src="https://coinut.com/public-assets/signature/www.png" alt="Website" width="27" height="27" style="display: block; border: 0; width: 27px; height: 27px;" />
+            </a>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  <tr>
+    <td style="padding: 0 0 20px 0;">
+      <table cellpadding="0" cellspacing="0" border="0" style="width: 100%;">
+        <tr>
+          <td valign="middle" style="width: 140px; padding-right: 15px;">
+            <a href="https://www.coinut.com" target="_blank" style="text-decoration: none;">
+              <img src="https://coinut.com/public-assets/signature/Coinut_Blue_1.png" alt="COINUT" width="135" style="display: block; border: 0; width: 135px; height: auto;" />
+            </a>
+          </td>
+          <td valign="middle" style="border-left: 2px solid #4275b2; font-size: 1px; line-height: 1px; width: 1px; height: 40px; padding: 0;">&nbsp;</td>
+          <td valign="middle" style="padding-left: 15px; font-family: 'Open Sans', Arial, sans-serif;">
+            <div style="font-size: 16px; font-weight: bold; color: #4275b2; line-height: 1.2;">
+              Singapore’s <span style="color: #47ceab;">Longest-running</span><br />
+              <span style="color: #4275b2;">Digital Assets Business</span>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  <tr>
+    <td style="width: 550px; max-width: 550px; font-family: 'Open Sans', Arial, sans-serif; font-size: 9.5px; color: #555555; text-align: justify; line-height: 13px; padding-bottom: 8px;">
+      NOTE: Privileged/Confidential Information may be contained in this message. If you are not the addressee indicated in this message (or responsible for delivery of the message to such person), you may not copy or deliver this message to anyone. In such a case, you should destroy this message and kindly notify the sender by replying by email. All opinions, conclusions and other information expressed in this message not of an official nature shall not be deemed as given or endorsed by the Coinut Group of Companies, unless otherwise indicated by an authorized representative independent of this message.
+    </td>
+  </tr>
+
+  <tr>
+    <td style="font-family: 'Open Sans', Arial, sans-serif; font-size: 9px; font-weight: 600; color: #47ceab; text-transform: uppercase; letter-spacing: 0.5px; line-height: 12px; padding-top: 4px;">
+      Singapore &bull; Canada &bull; Switzerland &bull; USA &bull; New Zealand
+    </td>
+  </tr>
+
+</tbody>
+</table>
+`;
+
+
+/*
+|--------------------------------------------------------------------------
+| Escape user input
+|--------------------------------------------------------------------------
+*/
+
+function escapeHTML(value) {
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Generate signature
+|--------------------------------------------------------------------------
+*/
+
+function getSignatureHTML() {
+
+    const employeeName = escapeHTML(
+        document.getElementById("employeeName").value.trim()
+    );
+
+    const employeeTitle = escapeHTML(
+        document.getElementById("employeeTitle").value.trim()
+    );
+
+    const employeeNumber = escapeHTML(
+        document.getElementById("employeeNumber").value.trim()
+    );
+
+    return signatureTemplate
+        .replace(/EMPLOYEENAME/g, employeeName)
+        .replace(/EMPLOYEETITLE/g, employeeTitle)
+        .replace(/EMPLOYEENUMBER/g, employeeNumber);
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Live Preview
+|--------------------------------------------------------------------------
+*/
+
+function updateSignature() {
+
+    const previewContainer =
+        document.getElementById("previewContainer");
+
+    previewContainer.innerHTML = getSignatureHTML();
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Copy formatted signature
+|--------------------------------------------------------------------------
+*/
+
+async function copyVisualSignature() {
+
+    const html = getSignatureHTML();
+
+    const temp = document.createElement("div");
+    temp.innerHTML = html;
+
+    const plainText = temp.innerText;
+
+    try {
+
+        if (navigator.clipboard && window.ClipboardItem) {
+
+            const item = new ClipboardItem({
+                "text/html": new Blob(
+                    [html],
+                    { type: "text/html" }
+                ),
+
+                "text/plain": new Blob(
+                    [plainText],
+                    { type: "text/plain" }
+                )
+            });
+
+            await navigator.clipboard.write([item]);
+
+        } else {
+
+            temp.style.position = "fixed";
+            temp.style.left = "-9999px";
+
+            document.body.appendChild(temp);
+
+            const range = document.createRange();
+            range.selectNodeContents(temp);
+
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+
+            document.execCommand("copy");
+
+            selection.removeAllRanges();
+            document.body.removeChild(temp);
+        }
+
+        showSuccess("Signature copied successfully!");
+
+    } catch (error) {
+
+        console.error(error);
+        showSuccess("Unable to copy signature.");
+    }
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Copy HTML source
+|--------------------------------------------------------------------------
+*/
+
+async function copyHTMLCode() {
+
+    const html = getSignatureHTML();
+
+    try {
+
+        await navigator.clipboard.writeText(html);
+
+        showSuccess("HTML code copied successfully!");
+
+    } catch (error) {
+
+        const textarea = document.createElement("textarea");
+
+        textarea.value = html;
+        textarea.style.position = "fixed";
+        textarea.style.left = "-9999px";
+
+        document.body.appendChild(textarea);
+
+        textarea.select();
+        document.execCommand("copy");
+
+        document.body.removeChild(textarea);
+
+        showSuccess("HTML code copied successfully!");
+    }
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Success message
+|--------------------------------------------------------------------------
+*/
+
+function showSuccess(message) {
+
+    const alert =
+        document.getElementById("successAlert");
+
+    alert.textContent = message;
+    alert.classList.add("show");
+
+    clearTimeout(window.successTimer);
+
+    window.successTimer = setTimeout(() => {
+        alert.classList.remove("show");
+    }, 3000);
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Initial preview
+|--------------------------------------------------------------------------
+*/
+
+document.addEventListener("DOMContentLoaded", function() {
+    updateSignature();
+});
+
+</script>
+
+</body>
+</html>
